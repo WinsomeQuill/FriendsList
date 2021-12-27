@@ -1,0 +1,49 @@
+---
+name: FriendsList
+version: 1.0.0
+main: WinsomeQuill\FriendsList\Main
+api: 4.0.3
+src-namespace-prefix: WinsomeQuill\FriendsList
+
+commands:
+  addfriend:
+    description: "Send request friend to player"
+    permission: friendslist.command.addfriend
+
+  acceptfriend:
+    description: "Accept request friend"
+    permission: friendslist.command.acceptfriend
+
+  cancelfriend:
+    description: "Reject request friend"
+    permission: friendslist.command.cancelfriend
+
+  friends:
+    description: "Get friends list"
+    permission: friendslist.command.friends
+
+  removefriend:
+    description: "Remove player from your friends list"
+    permission: friendslist.command.removefriend
+
+permissions:
+  friendslist.command.addfriend:
+    description: "Send request friend to player"
+    default: true
+
+  friendslist.command.acceptfriend:
+    description: "Accept request friend"
+    default: true
+
+  friendslist.command.cancelfriend:
+    description: "Reject request friend"
+    default: true
+
+  friendslist.command.friends:
+    description: "Get friends list"
+    default: true
+
+  friendslist.command.removefriend:
+    description: "Remove player from your friends list"
+    default: true
+...
