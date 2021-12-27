@@ -45,6 +45,11 @@ class Main extends PluginBase implements Listener {
                         break;
                     }
 
+                    if($sender->GetName() === $args[0]) {
+                        $sender->sendMessage("§f[§cError§f] You can't add yourself in your friend list!");
+                        break;
+                    }
+
                     $target = $this->findPlayer($args[0]);
                     if($target == null) {
                         $sender->sendMessage("§f[§cError§f] Player §e\"{$args[0]}\"§f not found!");
