@@ -1,0 +1,2 @@
+# FriendsList
+PocketMine-MP plugin
