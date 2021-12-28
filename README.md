@@ -11,9 +11,6 @@ Commands & Permissions
     /addfriend - Send request friend to player 
     [Perm: friendslist.command.addfriend]
     
-    /removefriend - Remove player from your friends list (If target is online then he will receive message)
-    [Perm: friendslist.command.removefriend]
-    
     /acceptfriend - Accept request friend from other player
     [Perm: friendslist.command.acceptfriend]
     
@@ -28,7 +25,7 @@ Requirements
     
 Todo
 ----
-- [ ] UI
+- [x] UI
 - [ ] Private profile (If the player has changed status on private, then other players will not be able to send a request)
 
 [Author in Vkontakte](https://vk.com/winsomequill)
