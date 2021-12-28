@@ -19,9 +19,15 @@ Commands & Permissions
 
 Requirements
 ----
+Core: 
 
-    Core: PocketMine-MP v4.0
-    Plugin: DevTools (If you not builded .phar file)
+PocketMine-MP v4.0
+
+Plugins:
+
+DevTools (If you not builded .phar file)
+    
+[FormAPI-PMMP](https://github.com/Yahir-AR/FormAPI-PMMP/tree/new-api)
     
 Todo
 ----
