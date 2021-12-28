@@ -1,6 +1,6 @@
 ---
 name: FriendsList
-version: 1.0.0
+version: 0.1.4
 main: WinsomeQuill\FriendsList\Main
 api: 4.0.3
 src-namespace-prefix: WinsomeQuill\FriendsList
@@ -22,10 +22,6 @@ commands:
     description: "Get friends list"
     permission: friendslist.command.friends
 
-  removefriend:
-    description: "Remove player from your friends list"
-    permission: friendslist.command.removefriend
-
 permissions:
   friendslist.command.addfriend:
     description: "Send request friend to player"
@@ -41,9 +37,5 @@ permissions:
 
   friendslist.command.friends:
     description: "Get friends list"
-    default: true
-
-  friendslist.command.removefriend:
-    description: "Remove player from your friends list"
     default: true
 ...

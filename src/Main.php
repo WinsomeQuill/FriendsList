@@ -5,8 +5,16 @@ declare(strict_types=1);
 namespace WinsomeQuill\FriendsList;
 
 require_once('provider/SQLite.php');
+require_once('form/Form.php');
+require_once('utils/Utils.php');
 
 use WinsomeQuill\FriendsList\provider\SQLManager;
+use WinsomeQuill\FriendsList\form\Form;
+use WinsomeQuill\FriendsList\utils\Utils;
+use FormAPI\response\PlayerWindowResponse;
+use FormAPI\window\SimpleWindowForm;
+use FormAPI\window\CustomWindowForm;
+use FormAPI\window\ModalWindowForm;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\command\Command;
@@ -50,7 +58,7 @@ class Main extends PluginBase implements Listener {
                         break;
                     }
 
-                    $target = $this->findPlayer($args[0]);
+                    $target = Utils::findPlayer($this, $args[0]);
                     if($target == null) {
                         $sender->sendMessage("§f[§cError§f] Player §e\"{$args[0]}\"§f not found!");
                         break;
@@ -83,34 +91,8 @@ class Main extends PluginBase implements Listener {
                     break;
 
                 case "friends":
-                    $list = SQLManager::friendsList($sender);
-                    if(count($list) == 0) {
-                        $sender->sendMessage("§f[§cError§f] Your friends list is empty!");
-                        break;
-                    }
-
-                    $msg = implode("\n §f- §e", $list);
-                    $sender->sendMessage("Your friends list:\n §f- §e{$msg}");
-                    break;
-
-                case "removefriend":
-                    if(count($args) == 0) {
-                        $sender->sendMessage("§f[§cError§f] Use: /removefriend <name>!");
-                        break;
-                    }
-
-                    if(!SQLManager::isFriend($sender, $args[0])) {
-                        $sender->sendMessage("§f[§cError§f] Player §e\"{$args[0]}\"§f not found in your friends list!");
-                        break;
-                    }
-
-                    if(SQLManager::removeFriend($sender, $args[0])) {
-                        $sender->sendMessage("§f[§aSuccess§f] Player §e\"{$args[0]}\"§f removed from your friends list!");
-                        $target = $this->findPlayer($args[0]);
-                        if($target !== null) {
-                            $target->sendMessage("§f[§eInforamtion§f] Player §e\"{$sender->GetName()}\"§f removed you from friends list!");
-                        }
-                    }
+                    $form = new Form();
+                    $form->friendsListForm($sender);
                     break;
             }
         }
@@ -143,12 +125,48 @@ class Main extends PluginBase implements Listener {
         return true;
     }
 
-    public function findPlayer(string $name) : ?Player {
-        foreach($this->getServer()->getOnlinePlayers() as $player) {
-            if(strtolower($player->GetName()) == strtolower($name)) {
-                return $player;
+    public function onResponse(PlayerWindowResponse $event): void {
+        $sender = $event->getPlayer();
+        $form = $event->getForm();
+    
+        if($form instanceof SimpleWindowForm && $form->getName() == "friendsListForm") {
+            unset(Form::$cachePlayer[$sender->GetName()]['targetName']);
+            return;
+        }
+
+        if ($form instanceof CustomWindowForm && $form->getName() === "friendsSendMessageForm") {
+            $message = $form->getElement("message")->getFinalValue();
+            $targetName = Form::$cachePlayer[$sender->GetName()]['targetName'];
+            $target = Utils::findPlayer($this, $targetName);
+            if($target === null) {
+                $sender->sendMessage("§f[§cError§f] Your friend is offline!");
+                return;
+            }
+            
+            $sender->sendMessage("§f[§aSuccess§f] You have successfully sent a message!");
+            $target->sendMessage("§f[§eInformation§f] Friend §e\"{$sender->GetName()}\"§f sended you message -> §a{$message}");
+            Form::friendManagementForm($sender, $targetName);
+            return;
+        }
+
+        if($form instanceof ModalWindowForm && $form->getName() === "removeFriendConfirm") {
+            $targetName = Form::$cachePlayer[$sender->GetName()]['targetName'];
+            if($form->isAccept()) {
+                SQLManager::removeFriend($sender, $targetName);
+
+                $target = Utils::findPlayer($this, $targetName);
+                $sender->sendMessage("§f[§aSuccess§f] Player §e\"{$targetName}\"§f removed from your friends list!");
+                if($target !== null) {
+                    $target->sendMessage("§f[§eInforamtion§f] Player §e\"{$sender->GetName()}\"§f removed you from friends list!");
+                    return;
+                }
+
+                Form::friendsListForm($sender);
+                return;
+            } else {
+                Form::friendManagementForm($sender, $targetName);
+                return;
             }
         }
-        return null;
     }
 }

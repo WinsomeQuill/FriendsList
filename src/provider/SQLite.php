@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace WinsomeQuill\FriendsList\provider;
 
+use pocketmine\plugin\PluginBase;
 use pocketmine\player\Player;
 
-class SQLManager {
+class SQLManager extends PluginBase {
     private static \SQLite3 $db;
 
     public static function Init(string $folder) {
@@ -107,8 +108,6 @@ class SQLManager {
             AND pf.friend_id = (SELECT id FROM players WHERE Name = '{$friend}')
             AND p.id = pf.friend_id;
         ");
-
-        echo $result . "\n";
 
         if($result === false || is_null($result)) {
             return false;
